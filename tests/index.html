@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Whitespell-CIO Tests</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic' rel='stylesheet' type='text/css'>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font: 300 16px 'Source Sans Pro', Helvetica, Arial, sans-serif;
+    color: #484848;
+}
+
+.container.todo {
+    width: 400px;
+    margin: 140px auto 0 auto;
+    background: #f5f5f5;
+
+    border-top: solid 1px #3796cf;
+    border-bottom: solid 1px #4648ae;
+}
+
+.todo header {
+    border-bottom: solid 1px #f1f1f1;
+}
+
+.todo input {
+    width: 100%;
+
+    font: 300 16px 'Source Sans Pro', Helvetica, Arial, sans-serif;
+    color: #3796cf;
+
+    background: transparent;
+    border: none;
+
+    padding: 15px 20px;
+}
+
+.todo input:focus {
+    outline: none;
+}
+
+::-webkit-input-placeholder {
+   color: #3796cf;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #3796cf;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #3796cf;
+}
+
+:-ms-input-placeholder {
+   color: #3796cf;
+}
+
+.todo ul {
+    margin: 0;
+    padding-left: 0;
+}
+
+.todo ul li {
+    overflow: hidden;
+    cursor: pointer;
+    list-style-type: none;
+    padding: 10px 20px;
+    border-bottom: solid 1px #f1f1f1;
+
+    -webkit-transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease;
+}
+
+.todo ul li:last-child {
+    border: none;
+}
+
+.todo ul li.completed {
+    text-decoration: line-through;
+}
+
+.todo ul li.hidden {
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 0;
+    border-width: 0;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container todo">
+
+    <header><input type="text" placeholder="Enter a new todo..." id="new-todo" /></header>
+
+    <ul id="todo-list"></ul>
+
+</div>
+
+<script type="text/javascript" src="../dist/whitespell-cio-1.0.0.js"></script>
+<script type="text/javascript">
+    var myOwnWs = new Whitespell("whitespell_rocks_dude");
+
+//TODO application
+(function(){
+
+    var newTodoInput = document.getElementById('new-todo'),
+        todoList = document.getElementById('todo-list');
+
+    var addTodo = function(content){
+        var li = document.createElement('li');
+        li.innerHTML = content;
+        todoList.appendChild(li);
+    };
+
+    //get todo's onLoad
+    myOwnWs.sendData({
+        'task': 'SelectTodo',
+        'name': 'test90'
+    }, function(data) {
+
+        data = JSON.parse(data);
+
+        for(var idx in data.results){
+            if(data.results.hasOwnProperty(idx)){
+
+                var curr = data.results[idx];
+                addTodo(curr.name);
+
+            }
+        }
+
+    });
+
+    newTodoInput.addEventListener('keyup', function(e){
+        if(e.keyCode === 13){
+            addTodo(this.value);
+            this.value = '';
+        }
+    }, false);
+
+    todoList.addEventListener('click', function(e){
+        var target = e.target;
+        if(target.tagName === 'LI' && target.className.indexOf('completed') === -1){
+
+            target.className = 'completed';
+
+            setTimeout(function(){
+                target.className += ' hidden';
+
+                setTimeout(function(){
+                    target.parentNode.removeChild(target);
+                }, 300);
+            }, 500);
+
+        }
+    }, false);
+
+}());
+
+</script>
+</body>
+</html>

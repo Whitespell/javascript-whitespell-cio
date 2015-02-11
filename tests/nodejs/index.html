@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Whitespell-CIO Custom Host Test</title>
+</head>
+<body>
+
+<script src="whitespell-cio-1.0.0.js"></script>
+<script src="socket.io-1.0.6.js"></script>
+<script>
+/*
+var socket = io();
+
+//Socket.io
+socket.emit('clientReq', 'Client to server over...');
+
+socket.on('serverReq', function(msg){
+    console.log('Server: '+msg);
+});
+*/
+
+//Whitespell
+var myOwnWs = new Whitespell({
+    workers: {
+        Cors: {
+            task: "request",
+            params: {
+                url: 'http://127.0.0.1',
+                port: 3000,
+                method: "post"
+            }
+        },
+        WebSocket: {
+            host: "127.0.0.1",
+            port: 3000
+        }
+    }
+});
+
+var socketSettings = myOwnWs.options.workers.WebSocket;
+
+myOwnWs.workerHandler.assign("WebSocket", {
+    task: "connect",
+    params: {
+        host: socketSettings.host,
+        port: socketSettings.port
+    }
+}, function (data) {
+    console.log(data);
+});
+
+myOwnWs.workerHandler.assign("WebSocket", {
+    task: "serverReq",
+    params: {
+        host: socketSettings.host,
+        port: socketSettings.port
+    }
+}, function (data) {
+    console.log(data);
+});
+
+</script>
+</body>
+</html>

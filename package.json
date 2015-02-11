@@ -1,0 +1,22 @@
+{
+  "name": "Whitespell-CIO.js",
+  "description": "The Whitespell Client IO JavaScript library lets you comminute with the server in an efficient way",
+  "keywords": ["whitespell", "io", "ws", "networking", "javascript", "library"],
+  "version": "1.0.0",
+
+  "homepage": "http://whitespell.com",
+
+  "repository": { "type":"git", "url":"http://grayson.whitespell.com/koen/whitespell-front-end-networking-library.git" },
+  "bugs": { "url" : "http://grayson.whitespell.com/koen/whitespell-front-end-networking-library/issues", "email" :"koen@whitespell.com" },
+
+  "author": "Pim de Witte <pim@whitespell.com>",
+  "contributors": ["Koen Vendrik <k.vendrik@gmail.com>"],
+  "license": "BSD-2-Clause",
+
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-uglify": "^0.5.1",
+    "grunt-contrib-jshint": "^0.10.0"
+  },
+  "dependencies": {}
+}
