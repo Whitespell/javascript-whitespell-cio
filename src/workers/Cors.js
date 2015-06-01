@@ -1,116 +1,82 @@
-(function(){
-
+(function () {
     var Cors = {};
-
-    Cors.work = function(data) {
-        "use strict";
-
-        switch(data.task) {
-
-            case "initialize": {
+    Cors.work = function (data) {
+        switch (data.task) {
+            case"initialize":
                 return;
-            }
-            case "request": {
-                if(data.params.method === undefined) {
-                    data.params.method = "GET";
+            case"request":
+                if (data.params.method === undefined) {
+                    data.params.method = "GET"
                 }
-                Cors.makeCorsRequest(data.params.url, data.params.method,  data.uid, data.params.parseData);
-                return;
-            }
+                Cors.makeCorsRequest(data.params.url, data.params.method, data.uid, data.params.payLoad, data.params.headerObject);
+                return
         }
     };
-
-// Create the XHR object.
-    Cors.createCORSRequest = function(method, url, parseData) {
-
+    Cors.createCORSRequest = function (method, url, payLoad, headerObject) {
         try {
-            if(method === "get") {
-                url = url+"?"+parseData;
+            if (method === "get") {
+                url = url + "?" + payLoad
             }
             var xhr = new XMLHttpRequest();
+
+
             if ("withCredentials" in xhr) {
-                // XHR for Chrome/Firefox/Opera/Safari.
                 xhr.open(method, url, true);
-                if(method === "post") {
-                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                }
-            } else if (typeof XDomainRequest != "undefined") {
-                // XDomainRequest for IE.
-                xhr = new XDomainRequest();
-                xhr.open("GET", url);
             } else {
-                // CORS not supported.
-                xhr = null;
+                if (typeof XDomainRequest != "undefined") {
+                    xhr = new XDomainRequest();
+                    xhr.open("GET", url)
+                } else {
+                    xhr = null
+                }
             }
-        }catch(er){
-            console.log(er.message);
+
+            for(var key in headerObject) {
+                console.log("set key" + headerObject)
+                    xhr.setRequestHeader(key, headerObject[key]);
+            }
+
+
+        } catch (er) {
+            console.log(er.message)
         }
-        return xhr;
+        return xhr
     };
-
-// Helper method to parse the title tag from the response.
-
-
-// Make the actual CORS request.
-    Cors.makeCorsRequest = function(url, method,  uid, parseData) {
-
+    Cors.makeCorsRequest = function (url, method, uid, payLoad, headerObject) {
         var url = url;
-
-        var xhr = Cors.createCORSRequest(method,
-            url, parseData);
+        var xhr = Cors.createCORSRequest(method, url, payLoad, headerObject);
         if (!xhr) {
-            Cors.say({
-                task: "request",
-                uid: uid,
-                content: "ERROR"
-
-            });
-            return;
+            Cors.say({task: "request", uid: uid, content: "ERROR"});
+            return
         }
-
-        // Response handlers.
-        xhr.onload = function() {
-            var text = xhr.responseText;
-            Cors.say({
-                task: "request",
-                uid: uid,
-                content: text
-            });
+        xhr.onload = function () {
+            var data = {
+                responseText : xhr.responseText,
+                status : xhr.status
+            };
+            Cors.say({task: "request", uid: uid, content: data})
         };
-
-        xhr.onerror = function() {
-            Cors.say({
-                task: "request",
-                uid: uid,
-                content: "ERROR"
-            });
+        xhr.onerror = function () {
+            Cors.say({task: "request", uid: uid, content: "ERROR"})
         };
-
-        if(method === "post") {
-            xhr.send(parseData);
+        if (method === "post") {
+            xhr.send(payLoad)
         } else {
-            xhr.send();
+            xhr.send()
         }
     };
-
-
-    self.addEventListener("message", function(e) {
-        Cors.work(e.data);
+    self.addEventListener("message", function (e) {
+        Cors.work(e.data)
     }, false);
-
-
-    Cors.say = function(e) {
+    Cors.say = function (e) {
         try {
-            self.postMessage(e);
-        } catch(error) {
-            Whitespell.workers.handleManualResponse("Cors", e);
+            self.postMessage(e)
+        } catch (error) {
+            workerHandler.handleResponse(e)
         }
     };
-
-    Cors.CorsListen = function(e) {
-        Cors.work(e);
+    Cors.CorsListen = function (e) {
+        Cors.work(e)
     };
-
     return Cors;
-
 }());

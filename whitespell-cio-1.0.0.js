@@ -76,13 +76,9 @@ var Whitespell = function(apiKey, options){
             Cors: {
                 task: "request",
                 params: {
-                    url: 'http://172.16.1.2:8040/blox',
-                    method: "post"
                 }
             },
             WebSocket: {
-                host: 'http://172.16.1.2',
-                port: 9092
             }
         }
 
@@ -172,7 +168,7 @@ var WorkerHandler = function(options) {
 
     //Default setting for workers
     //will be overwritten in case workers are not supported
-    this.usingWorkers = false;//(ie === false);
+    this.usingWorkers = true;//(ie === false);
 
     if(this.options.apiKey) this.initWebSocket();
 };
@@ -201,7 +197,7 @@ WorkerHandler.prototype.initWebSocket = function(){
                 task: "json",
                 params: {
                     message: {
-					     '@class': 'com.whitespell.net.jsontask.SetUserInfo',
+					    '@class': 'com.whitespell.net.jsontask.SetUserInfo',
 					    apiKey: self.options.apiKey,
 					    connectionType: 'WIFI',
 					    deviceType: self.options.deviceType,
@@ -228,6 +224,8 @@ WorkerHandler.prototype.initWebSocket = function(){
     });
 
 };
+
+    // escape cors with http://www.freeformatter.com/javascript-escape.html#ad-output
 
 WorkerHandler.prototype.workers = {
     WebSocket: "" +
